@@ -1,8 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8"%>
 <%@ page import ="java.io.*"%>
-<%@ page import ="bbs.Bbs" %>
-<%@ page import ="bbs.BbsDAO" %>
+<%@ page import = "java.sql.*"%>
 <%@ page import = "java.util.ArrayList" %>
 <%@ page import = "java.time.*" %>
 <%@ page import ="java.net.URLEncoder" %>
@@ -94,20 +93,34 @@
 <div align="left" style="color:blue; border:solid blue; width:400px; height:350px; margin-right:100px; margin-left:20px; padding:3% 3%">
 <h1 align="center"> < 오늘 할 일 ></h1>
 <%
-	BbsDAO bbsDAO = new BbsDAO();
-	ArrayList<Bbs> list = bbsDAO.getList(bbsDAO.getPageNum());
-	for(int a=0;a<list.size();a++){
-		String name = list.get(a).getTitle();
-		String date=list.get(a).getDate();
-		LocalDate now = LocalDate.now();
-		int day = now.getDayOfMonth();
+	ResultSet rs;
+	Connection conn;
+
+	      try{
+		  String DB_URL="jdbc:mysql://db:3306/example_db?useSSL=false&autoReconnect=true&characterEncoding=utf8";
+		  String DB_USER="example_db_user";
+		  String DB_PASSWORD="example_db_pass";
+		  Class.forName("com.mysql.jdbc.Driver");
+		  conn=DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+		 
+		  String SQL= "SELECT * FROM duty ORDER BY date ASC";
+		  PreparedStatement pstmt=conn.prepareStatement(SQL);
+		  rs=pstmt.executeQuery();
+		  while(rs.next()){                          //title ,info, id, date, weight
+			String name = rs.getString(1);
+			String date=rs.getString(4);
+			LocalDate now = LocalDate.now();
+			int day = now.getDayOfMonth();
 	
 		if(Integer.parseInt(date.substring(0,4))==year&&Integer.parseInt(date.substring(4,6))==(month+1)&&Integer.parseInt(date.substring(6))==day)
 		{//해당하는 날짜에 맞춰 스케쥴 출력
-			out.println("<h3 align='center'>"+list.get(a).getUserId()+" : "+name+"</h3>"); //유저이름 : 할 일 이름 순으로 출력
+			out.println("<h3 align='center'>"+rs.getString(3)+" : "+name+"</h3>"); //유저이름 : 할 일 이름 순으로 출력
 		}
 		
-	} 
+				} 
+                        }catch(Exception e){
+                        e.printStackTrace();
+                        }
 	
 %>
 </div>
@@ -170,18 +183,32 @@
    }
    for(int i=1; i<=end; i++) { //날짜출력
     out.println("<td height=100 style='margin:0 0; vertical-align : top'>" + i );
-   	
+   	try{
+                          String DB_URL="jdbc:mysql://db:3306/example_db?useSSL=false&autoReconnect=true&characterEncoding=utf8";
+                          String DB_USER="example_db_user";
+                          String DB_PASSWORD="example_db_pass";
+                          Class.forName("com.mysql.jdbc.Driver");
+                          conn=DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+                         
+                          String SQL= "SELECT * FROM duty ORDER BY date ASC";
+                          PreparedStatement pstmt=conn.prepareStatement(SQL);
+                          rs=pstmt.executeQuery();
    		
-		for(int a=0;a<list.size();a++){
-			String name = list.get(a).getTitle();
-			String date=list.get(a).getDate();
+		 while(rs.next()){                          //title ,info, id, date, weight
+			String name = rs.getString(1);
+			String date=rs.getString(4);
 			
 			if(Integer.parseInt(date.substring(0,4))==year&&Integer.parseInt(date.substring(4,6))==(month+1)&&Integer.parseInt(date.substring(6))==i)
 			{//해당하는 날짜에 맞춰 스케쥴 출력 %>
 				<a href='view.jsp?title=<%=URLEncoder.encode(name,"UTF-8")%>'><%=name%><br></a>
 			<% }
 			
-		} out.println("</td>");
+		} 
+	}catch(Exception e){
+          e.printStackTrace();
+          } 
+		
+		out.println("</td>");
    	
    		
     br++;
