@@ -3,6 +3,9 @@
 <%@ page import ="java.io.*"%>
 <%@ page import ="bbs.Bbs"%>
 <%@ page import ="bbs.BbsDAO"%>
+<%@ page import ="java.net.URLEncoder" %>
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,28 +24,25 @@
 	}
 	
 	String bbsTitle=null;
-	
-	if(request.getParameter("title")!=null)
+	if(request.getParameter("title") !=null)//bbs.jsp에서 글을 눌러 view로 넘어오는데 title을 가지고 넘어옴
 	{
 		bbsTitle=request.getParameter("title");
+		//System.out.println(bbsTitle);
 	}
-	else
+	if(bbsTitle==null)
 	{
-		PrintWriter script=response.getWriter();
-		script.println("<script>"); //이런 스크립트문장을 자동적으로 생성
-		script.println("alert('기록이 없는 일정 입니다.')"); //이런 스크립트문장을 자동적으로 생성
-		script.println("history.back()"); //join으로 다시 이동
+		PrintWriter script = response.getWriter();
+		script.println("<script>");
+		script.println("alert('존재하지 않는 글 입니다.')");
+		script.println("location.href='bbs.jsp'");
 		script.println("</script>");
 	}
-	
-	Bbs bbs=new BbsDAO().getBbs(bbsTitle);
-	
-	if(!bbsTitle.equals(bbs.getTitle()))
-	{
-		PrintWriter script=response.getWriter();
-		script.println("<script>"); //이런 스크립트문장을 자동적으로 생성
-		script.println("alert('존재하지 않는 글 입니다.')"); //이런 스크립트문장을 자동적으로 생성
-		script.println("history.back()"); //join으로 다시 이동
+	Bbs bbs= new BbsDAO().getBbs(bbsTitle);
+	if(!userId.equals(bbs.getUserId())){
+		PrintWriter script = response.getWriter();
+		script.println("<script>");
+		script.println("alert('권한이 없습니다.')");
+		script.println("location.href='bbs.jsp'");
 		script.println("</script>");
 	}
 %>
@@ -56,29 +56,14 @@
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="main.jsp">일정 관리 웹</a>
+			<a class="navbar-brand" href="main.jsp">일정관리 웹</a>
 		</div>
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
 				<li><a href="main.jsp">메인</a></li>
-				<li class=active><a href="bbs.jsp">전체 일정 보기</a></li>
+				<li class=active><a href="bbs.jsp">일정보기</a></li>
 			</ul>
-			<% if(userId==null){ //로그인 되어 있지 않아서, userId 세션 할당 받지 못했고, 그로인해 userId가 null이라면
-				%>
-			<ul class="nav navbar-nav navbar-right">
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle"
-						data-toggle="dropdown" role="button" aria-haspopup="true"
-						aria-expanded="false">접속하기<span class="caret"></span></a>
-					<ul class="dropdown-menu">
-						<li><a href="login.jsp">로그인</a></li>
-						<li><a href="join.jsp">회원가입</a></li>
-					</ul>
-				</li>
-			</ul>
-			<%
-			} else{ //로그인 되어 있어서 userId로 세션을 할당 받았고, attribute
-			%>
+			
 				<ul class="nav navbar-nav navbar-right">
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle"
@@ -90,35 +75,37 @@
 				</li>
 			</ul>
 				
-			<% }%>
 		</div>
 	</nav>
 	
 	<div class="container">
 		<div class="row">
-		<form method="post" action="updateAction.jsp?title=<%=bbsTitle%>">
+						
+		<form method="post" action='updateAction.jsp?<%=URLEncoder.encode(bbs.getTitle(),"UTF-8")%>'>
 			<table class="table table-striped" style="text-align: center; border: 1px solid #dddddd">
 				<thead><%-- 게시판목록 헤드 --%>
 					<tr>
-						<th colspan="2" style="background-color:#eeeeee; text-align:center;">일정 수정 양식</th>
+						<th colspan="2" style="background-color:#eeeeee; text-align:center;">일정수정양식</th>
 					</tr>
 				</thead>
 				<tbody><%-- 게시판목록 몸체 --%>
 					<tr>
-						<td><input type="text" class="form-control" placeholder="일정이름" name="title" maxlength="25" value=<%=bbsTitle%>></td>
+						<td><input type="text" class="form-control" placeholder="일정이름" name="title" maxlength="25" value=<%=bbs.getTitle() %>></td>
 					</tr>
 					<tr>
-						<td><input type="text" class="form-control" placeholder="날짜" name="date" maxlength="25" value=<%=bbs.getDate() %>></td>
+						<td><input type="text" class="form-control" placeholder="날짜" name="date" maxlength="25" value=<%= bbs.getDate() %>></td>
 					</tr>
 					<tr>	
-					<td><input type="text" class="form-control" placeholder="중요도" name="weight" maxlength="25" value=<%=bbs.getWeight() %>></td>
+					<td><input type="text" class="form-control" placeholder="중요도" name="weight" maxlength="25" value=<%=bbs.getWeight()%> ></td>
 					</tr>	
 					<tr>
-						<td><textarea class="form-control" placeholder="내용" name="info" maxlength="25" style = "height:350px;"><%=bbs.getInfo() %></textarea></td>
+						<td><textarea class="form-control" placeholder="내용" name="info" maxlength="25" style="height:350px;"><%=bbs.getInfo() %></textarea></td>
 					</tr>
 				</tbody>
-			<input type="submit" value="일정수정" class="btn btn-primary pull-right" >
 			</table>
+			<input type="submit" class="btn btn-primary pull-right" value="일정수정">
+			<a href="bbs.jsp" class="btn btn-primary">목록</a>
+			
 		</form>
 		</div>
 	</div>

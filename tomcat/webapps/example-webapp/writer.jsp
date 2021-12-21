@@ -28,12 +28,12 @@
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="main.jsp">일정 관리 웹</a>
+			<a class="navbar-brand" href="main.jsp">일정관리 웹</a>
 		</div>
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
 				<li><a href="main.jsp">메인</a></li>
-				<li class=active><a href="bbs.jsp">전체 일정 보기</a></li>
+				<li class=active><a href="bbs.jsp">일정보기</a></li>
 			</ul>
 			<% if(userId==null){ //로그인 되어 있지 않아서, userId 세션 할당 받지 못했고, 그로인해 userId가 null이라면
 				%>
@@ -80,7 +80,7 @@
 						<td><input type="text" class="form-control" placeholder="일정이름" name="title" maxlength="25"></td>
 					</tr>
 					<tr>
-						<td><input type="text" class="form-control" placeholder="날짜" name="date" maxlength="25"></td>
+						<td><input type="text" class="form-control" placeholder="날짜(YYYYMMDD)" name="date" maxlength="25"></td>
 					</tr>
 					<tr>	
 					<td><input type="text" class="form-control" placeholder="중요도" name="weight" maxlength="25"></td>
@@ -89,8 +89,11 @@
 						<td><textarea class="form-control" placeholder="내용" name="info" maxlength="25" style=height:350px;></textarea></td>
 					</tr>
 				</tbody>
-				<input type="submit" class="btn btn-primary pull-right" value="일정추가">
 			</table>
+			<input type="submit" class="btn btn-primary pull-right" value="일정추가">
+			<a href="bbs.jsp" class="btn btn-primary">목록</a>
+			
+			
 		</form>
 		</div>
 	</div>

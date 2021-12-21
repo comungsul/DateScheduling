@@ -1,42 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8"%>
 <%@ page import ="java.io.*"%>
+<%@ page import ="bbs.Bbs"%>
+<%@ page import ="bbs.BbsDAO"%>
 <%@ page import = "java.util.ArrayList" %>
 <%@ page import ="java.net.URLEncoder" %>
-<%@ page import = "bbs.*" %>
 
-
-<%
-
-  String DB_URL="jdbc:mysql://db:3306/example_db?useSSL=false&amp;autoReconnect=true&characterEncoding=utf8";
-  String DB_USER="example_db_user";
-  String DB_PASSWORD="example_db_pass";
- 
-  ResultSet rs;
-  Connection conn;
-  PreparedStatement pstmt;
-  String sql = "SELECT * from user";
-  
-  try{
-      Class.forName("com.mysql.jdbc.Driver");
-      conn=DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-      pstmt=conn.prepareStatement(sql);
-      rs=pstmt.executeQuery();
-      if(rs.next()){
-         
-          out.println(rs.getString(3));
-          }
-      else{ out.println("jojojojojo");}
-     
-     
-     
-      out.println("MYSQL CON SUC");
-     
-    }catch(Exception e){
-    out.println(e);
-    }
-    
- %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -59,7 +28,6 @@
 	{
 		userId=(String)session.getAttribute("userId");
 	}
-	
 %>
 
 	<nav class="navbar navbar-default">
@@ -71,12 +39,12 @@
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="main.jsp">일정 관리 웹</a>
+			<a class="navbar-brand" href="main.jsp">일정관리 웹</a>
 		</div>
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
 				<li><a href="main.jsp">메인</a></li>
-				<li class=active><a href="bbs.jsp">전체 일정 보기</a></li>
+				<li class=active><a href="bbs.jsp">일정보기</a></li>
 			</ul>
 			<% if(userId==null){ //로그인 되어 있지 않아서, userId 세션 할당 받지 못했고, 그로인해 userId가 null이라면
 				%>
@@ -117,26 +85,28 @@
 						<th style="background-color:#eeeeee; text-align:center;">날짜</th>
 						<th style="background-color:#eeeeee; text-align:center;">일정이름</th>
 						<th style="background-color:#eeeeee; text-align:center;">중요도</th>
-						<th style="background-color:#eeeeee; text-align:center;">내용</th>
+						<th style="background-color:#eeeeee; text-align:center;">일정작성자</th>
 					</tr>
 				</thead>
 				<tbody><%-- 게시판목록 몸체 --%>
 					
 					<% BbsDAO bbsDAO = new BbsDAO();
 					ArrayList<Bbs> list = bbsDAO.getList(bbsDAO.getPageNum());
-					for(int i=0;i<list.size();i++){%>
+					for(int i=0;i<list.size();i++){
+					String name = list.get(i).getTitle();%>
 					<tr>
-					<% String title=list.get(i).getTitle(); %>
 						<td><%=list.get(i).getDate()%></td>
-						<td><a href='view.jsp?title=<%=URLEncoder.encode(title,"utf-8")%>'><%=list.get(i).getTitle()%></a></td>
+						<td><a href='view.jsp?title=<%=URLEncoder.encode(name,"UTF-8")%>'><%=list.get(i).getTitle()%></a></td>
 						<td><%=list.get(i).getWeight()%></td>
-						<td><%=list.get(i).getInfo()%></td>
+						<td><%=list.get(i).getUserId()%></td>
 					</tr>
 					<%} %>
 					
 				</tbody>
 			</table>
-			<a href="writer.jsp" class="btn btn-primary pull-right">일정추가</a>	
+			<% if(userId!=null){%>
+			<a href="writer.jsp" class="btn btn-primary pull-right">일정추가</a>
+			<%} %>	
 		</div>
 	</div>
 

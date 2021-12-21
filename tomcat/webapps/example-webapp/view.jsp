@@ -1,9 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8"%>
 <%@ page import ="java.io.*"%>
-<%@ page import ="java.net.URLEncoder" %>
 <%@ page import = "bbs.Bbs" %>
 <%@ page import = "bbs.BbsDAO" %>
+<%@ page import ="java.net.URLEncoder" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -26,6 +27,7 @@
 	if(request.getParameter("title") !=null)//bbs.jsp에서 글을 눌러 view로 넘어오는데 title을 가지고 넘어옴
 	{
 		bbsTitle=request.getParameter("title");
+		//System.out.println(bbsTitle);
 	}
 	if(bbsTitle==null)
 	{
@@ -38,7 +40,6 @@
 	
 	Bbs bbs = new BbsDAO().getBbs(bbsTitle);
 %>
-
 <nav class="navbar navbar-default">
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle collapsed"
@@ -48,12 +49,12 @@
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="main.jsp">일정 관리 웹</a>
+			<a class="navbar-brand" href="main.jsp">일정관리 웹</a>
 		</div>
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
-				<li class=active><a href="main.jsp">메인</a></li>
-				<li><a href="bbs.jsp">전체 일정 보기</a></li>
+				<li><a href="main.jsp">메인</a></li>
+				<li class=active><a href="bbs.jsp">일정보기</a></li>
 			</ul>
 			<% if(userId==null){ //로그인 되어 있지 않아서, userId 세션 할당 받지 못했고, 그로인해 userId가 null이라면
 				%>
@@ -84,45 +85,50 @@
 				
 			<% }%>
 		</div>
-	</nav> 
-<div class="container">
+	</nav>
+	
+	<div class="container">
 		<div class="row">
 			<table class="table table-striped" style="text-align: center; border: 1px solid #dddddd">
-				<thead><%-- 일정 헤드 --%>
+				<thead><%-- 게시판목록 헤드 --%>
 					<tr>
-						<th colspan="2" style="background-color:#eeeeee; text-align:center;">일정 보기</th>
+						<th colspan="3" style="background-color:#eeeeee; text-align:center;">일정보기</th>
 					</tr>
 				</thead>
-				<tbody><%-- 일정 몸체 --%>
+				<tbody><%-- 게시판목록 몸체 --%>	
 					<tr>
-						<td style="width: 20%;">일정 이름</td>
+						<td style="width:20%;">일정 제목</td>
 						<td colspan="2"><%= bbs.getTitle() %></td>
 					</tr>
 					<tr>
-						<td style="width: 20%;">일정 날짜</td>
+						<td>일정 작성자</td>
+						<td colspan="2"><%= bbs.getUserId() %></td>
+					</tr>
+					<tr>
+						<td>작성일자</td>
 						<td colspan="2"><%= bbs.getDate() %></td>
 					</tr>
 					<tr>
-						<td style="width: 20%;">일정 중요도</td>
+						<td>일정중요도</td>
 						<td colspan="2"><%= bbs.getWeight() %></td>
-					</tr>	
+					</tr> 
 					<tr>
-						<td style="width: 20%;">일정 내용</td>
-						<td colspan="2" style="min-height:200px; text-align:left;"><%= bbs.getInfo().replaceAll(" ","&nbsp;").replaceAll("<","&lt;").replaceAll(">","&rt;") %></td>
+						<td>일정내용</td>
+						<td colspan="2" style="min-height:200px; text-align:left;"><%= bbs.getInfo().replaceAll(" ", "&nbsp;").replaceAll("\n","<br>") %></td>
 					</tr>
 				</tbody>
 			</table>
 			<a href="bbs.jsp" class="btn btn-primary">목록</a>
-			<%
-				if(userId !=null&&userId.equals(bbs.getUserId()))
-				{
-					String title=bbs.getTitle();
-			%>
-			<a href='update.jsp?title=<%=URLEncoder.encode(title,"utf-8")%>' class="btn btn-primary">수정하기</a>
-			<a href='deleteAction.jsp?title=<%=URLEncoder.encode(title,"utf-8")%>' class="btn btn-primary">삭제하기</a>
-			<%} %>
+			<% if(userId != null && userId.equals(bbs.getUserId())){
+				%>
+				<a href='update.jsp?title=<%=URLEncoder.encode(bbs.getTitle(),"UTF-8")%>'class="btn btn-primary">수정</a>
+				<a onclick="return confirm('정말 삭제하시겠습니까?')" href='deleteAction.jsp?title=<%=URLEncoder.encode(bbs.getTitle(),"UTF-8")%>'class="btn btn-primary">삭제</a>
+				
+			<%}%>
 		</div>
 	</div>
+
+	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 	<script src="js/bootstrap.min.js"></script> 
 </body>
