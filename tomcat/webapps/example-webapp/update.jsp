@@ -1,8 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8"%>
 <%@ page import ="java.io.*"%>
-<%@ page import ="bbs.Bbs"%>
-<%@ page import ="bbs.BbsDAO"%>
+<%@ page import ="java.sql.*"%>
 <%@ page import ="java.net.URLEncoder" %>
 
 
@@ -37,8 +36,41 @@
 		script.println("location.href='bbs.jsp'");
 		script.println("</script>");
 	}
-	Bbs bbs= new BbsDAO().getBbs(bbsTitle);
-	if(!userId.equals(bbs.getUserId())){
+	//Bbs bbs= new BbsDAO().getBbs(bbsTitle);
+	
+	String title=null;
+	String info=null;
+	String id=null;
+	String date=null;
+	String weight=null;	
+	String SQL= "SELECT * FROM duty WHERE title = ?";
+		
+		try {
+			  ResultSet rs;
+		          Connection conn;
+			  String DB_URL="jdbc:mysql://db:3306/example_db?useSSL=false&autoReconnect=true&characterEncoding=utf8";
+                         String DB_USER="example_db_user";
+                         String DB_PASSWORD="example_db_pass";
+                         Class.forName("com.mysql.jdbc.Driver");
+                         conn=DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+			  PreparedStatement pstmt=conn.prepareStatement(SQL);
+			  pstmt.setString(1,bbsTitle);
+			  rs=pstmt.executeQuery();
+			  while(rs.next())
+			  {
+				  //title ,info, id, date, weight
+				  title=rs.getString(1);
+				  info=rs.getString(2);
+				  id=rs.getString(3);
+				  date=rs.getString(4);
+				  weight=rs.getString(5);
+				 
+			  }
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+
+	if(!userId.equals(id)){
 		PrintWriter script = response.getWriter();
 		script.println("<script>");
 		script.println("alert('권한이 없습니다.')");
@@ -81,7 +113,7 @@
 	<div class="container">
 		<div class="row">
 						
-		<form method="post" action='updateAction.jsp?<%=URLEncoder.encode(bbs.getTitle(),"UTF-8")%>'>
+		<form method="post" action='updateAction.jsp?<%=URLEncoder.encode(title,"UTF-8")%>'>
 			<table class="table table-striped" style="text-align: center; border: 1px solid #dddddd">
 				<thead><%-- 게시판목록 헤드 --%>
 					<tr>
@@ -90,16 +122,17 @@
 				</thead>
 				<tbody><%-- 게시판목록 몸체 --%>
 					<tr>
-						<td><input type="text" class="form-control" placeholder="일정이름" name="title" maxlength="25" value=<%=bbs.getTitle() %>></td>
+						<td><input type="text" class="form-control" placeholder="일정이름" name="title" maxlength="25" value=<%=title%>></td>
+						<%out.println("<h2>"+title+"</h2>");%>
 					</tr>
 					<tr>
-						<td><input type="text" class="form-control" placeholder="날짜" name="date" maxlength="25" value=<%= bbs.getDate() %>></td>
+						<td><input type="text" class="form-control" placeholder="날짜" name="date" maxlength="25" value=<%= date %>></td>
 					</tr>
 					<tr>	
-					<td><input type="text" class="form-control" placeholder="중요도" name="weight" maxlength="25" value=<%=bbs.getWeight()%> ></td>
+					<td><input type="text" class="form-control" placeholder="중요도" name="weight" maxlength="25" value=<%=weight%> ></td>
 					</tr>	
 					<tr>
-						<td><textarea class="form-control" placeholder="내용" name="info" maxlength="25" style="height:350px;"><%=bbs.getInfo() %></textarea></td>
+						<td><textarea class="form-control" placeholder="내용" name="info" maxlength="25" style="height:350px;"><%=info%></textarea></td>
 					</tr>
 				</tbody>
 			</table>

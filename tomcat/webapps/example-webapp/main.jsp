@@ -93,10 +93,10 @@
 <div align="left" style="color:blue; border:solid blue; width:400px; height:350px; margin-right:100px; margin-left:20px; padding:3% 3%">
 <h1 align="center"> < 오늘 할 일 ></h1>
 <%
-	ResultSet rs;
-	Connection conn;
-
+	
 	      try{
+	          ResultSet rs;
+	      	  Connection conn;
 		  String DB_URL="jdbc:mysql://db:3306/example_db?useSSL=false&autoReconnect=true&characterEncoding=utf8";
 		  String DB_USER="example_db_user";
 		  String DB_PASSWORD="example_db_pass";
@@ -133,11 +133,11 @@
  <label for="weight">중요도 : </label>
 <select name="weight" id="weight">
     <option value="">일정 중요도</option>
-    <option value="최상">최상</option>
-    <option value="상">상</option>
-    <option value="중">중</option>
-    <option value="하">하</option>
-    <option value="최하">최하</option>
+    <option value="5">5</option>
+    <option value="4">4</option>
+    <option value="3">3</option>
+    <option value="2">2</option>
+    <option value="1">1</option>
 </select>
   일정이름 :  <input type=text name=title style="margin-right:10px">
    <input type=submit class="btn btn-primary"  value="추가">
@@ -184,6 +184,9 @@
    for(int i=1; i<=end; i++) { //날짜출력
     out.println("<td height=100 style='margin:0 0; vertical-align : top'>" + i );
    	try{
+   			   ResultSet rs;
+         	           Connection conn;
+
                           String DB_URL="jdbc:mysql://db:3306/example_db?useSSL=false&autoReconnect=true&characterEncoding=utf8";
                           String DB_USER="example_db_user";
                           String DB_PASSWORD="example_db_pass";

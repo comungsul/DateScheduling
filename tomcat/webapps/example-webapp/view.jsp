@@ -1,8 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8"%>
 <%@ page import ="java.io.*"%>
-<%@ page import = "bbs.Bbs" %>
-<%@ page import = "bbs.BbsDAO" %>
+<%@ page import = "java.sql.*"%>
 <%@ page import ="java.net.URLEncoder" %>
 
 <!DOCTYPE html>
@@ -38,7 +37,39 @@
 		script.println("</script>");
 	}
 	
-	Bbs bbs = new BbsDAO().getBbs(bbsTitle);
+//	Bbs bbs = new BbsDAO().getBbs(bbsTitle);
+	
+	String title=null;
+	String info=null;
+	String id=null;
+	String date=null;
+	String weight=null;	
+	String SQL= "SELECT * FROM duty WHERE title = ?";
+		
+		try {
+			  ResultSet rs;
+		          Connection conn;
+			  String DB_URL="jdbc:mysql://db:3306/example_db?useSSL=false&autoReconnect=true&characterEncoding=utf8";
+                         String DB_USER="example_db_user";
+                         String DB_PASSWORD="example_db_pass";
+                         Class.forName("com.mysql.jdbc.Driver");
+                         conn=DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+			  PreparedStatement pstmt=conn.prepareStatement(SQL);
+			  pstmt.setString(1,bbsTitle);
+			  rs=pstmt.executeQuery();
+			  while(rs.next())
+			  {
+				  //title ,info, id, date, weight
+				  title=rs.getString(1);
+				  info=rs.getString(2);
+				  id=rs.getString(3);
+				  date=rs.getString(4);
+				  weight=rs.getString(5);
+				 
+			  }
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
 %>
 <nav class="navbar navbar-default">
 		<div class="navbar-header">
@@ -98,31 +129,31 @@
 				<tbody><%-- 게시판목록 몸체 --%>	
 					<tr>
 						<td style="width:20%;">일정 제목</td>
-						<td colspan="2"><%= bbs.getTitle() %></td>
+						<td colspan="2"><%= title %></td>
 					</tr>
 					<tr>
 						<td>일정 작성자</td>
-						<td colspan="2"><%= bbs.getUserId() %></td>
+						<td colspan="2"><%= id %></td>
 					</tr>
 					<tr>
 						<td>작성일자</td>
-						<td colspan="2"><%= bbs.getDate() %></td>
+						<td colspan="2"><%= date %></td>
 					</tr>
 					<tr>
 						<td>일정중요도</td>
-						<td colspan="2"><%= bbs.getWeight() %></td>
+						<td colspan="2"><%= weight %></td>
 					</tr> 
 					<tr>
 						<td>일정내용</td>
-						<td colspan="2" style="min-height:200px; text-align:left;"><%= bbs.getInfo().replaceAll(" ", "&nbsp;").replaceAll("\n","<br>") %></td>
+						<td colspan="2" style="min-height:200px; text-align:left;"><%= info.replaceAll(" ", "&nbsp;").replaceAll("\n","<br>") %></td>
 					</tr>
 				</tbody>
 			</table>
 			<a href="bbs.jsp" class="btn btn-primary">목록</a>
-			<% if(userId != null && userId.equals(bbs.getUserId())){
+			<% if(userId != null && userId.equals(id)){
 				%>
-				<a href='update.jsp?title=<%=URLEncoder.encode(bbs.getTitle(),"UTF-8")%>'class="btn btn-primary">수정</a>
-				<a onclick="return confirm('정말 삭제하시겠습니까?')" href='deleteAction.jsp?title=<%=URLEncoder.encode(bbs.getTitle(),"UTF-8")%>'class="btn btn-primary">삭제</a>
+				<a href='update.jsp?title=<%=URLEncoder.encode(title,"UTF-8")%>'class="btn btn-primary">수정</a>
+				<a onclick="return confirm('정말 삭제하시겠습니까?')" href='deleteAction.jsp?title=<%=URLEncoder.encode(title,"UTF-8")%>'class="btn btn-primary">삭제</a>
 				
 			<%}%>
 		</div>

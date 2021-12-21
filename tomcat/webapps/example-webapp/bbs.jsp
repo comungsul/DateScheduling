@@ -87,7 +87,7 @@
                         <th style="background-color:#eeeeee; text-align:center;">날짜</th>
                         <th style="background-color:#eeeeee; text-align:center;">일정이름</th>
                         <th style="background-color:#eeeeee; text-align:center;">중요도</th>
-                        <th style="background-color:#eeeeee; text-align:center;">내용</th>
+                        <th style="background-color:#eeeeee; text-align:center;">작성자</th>
                     </tr>
                 </thead>
                 <tbody><%-- 게시판목록 몸체 --%>
@@ -112,7 +112,7 @@
                             <td><%=rs.getString(4)%></td>
                             <td><a href='view.jsp?title=<%=URLEncoder.encode(title,"utf-8")%>'><%=title%></a></td>
                             <td><%=rs.getString(5)%></td>
-                            <td><%=rs.getString(2)%></td>
+                            <td><%=rs.getString(3)%></td>
                         </tr>
     
                           <%}

@@ -1,11 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8"%>
-<%@ page import ="user.UserDAO" %>
 <%@ page import ="java.io.*" %>
+<%@ page import ="java.sql.*"%>
 <% request.setCharacterEncoding("utf-8"); %>
-<jsp:useBean id="user" class="user.User" scope="page"/>
-<jsp:setProperty name="user" property="userId"/> <%--user객체에 아이디 설정 --%>
-<jsp:setProperty name="user" property="userPw"/><%--user객체에 비번 설정 --%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -28,12 +26,38 @@
 			script.println("location.href = 'main.jsp'"); //main으로 이동
 			script.println("</script>");
 		}
-		
-		UserDAO userDAO = new UserDAO();
-		int result = userDAO.login(user.getUserId(),user.getUserPw());
+		userId=request.getParameter("userId");
+		String userPw=request.getParameter("userPw");
+		int result =3;
+		ResultSet rs;
+               Connection conn;
+		String SQL="SELECT userPw FROM user where userId=?";
+		try {
+			String DB_URL="jdbc:mysql://db:3306/example_db?useSSL=false&autoReconnect=true&characterEncoding=utf8";
+                       String DB_USER="example_db_user";
+                       String DB_PASSWORD="example_db_pass";
+                      	Class.forName("com.mysql.jdbc.Driver");
+                       conn=DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+			
+			PreparedStatement pstmt=conn.prepareStatement(SQL);
+			pstmt.setString(1, userId); 
+			rs=pstmt.executeQuery();
+			
+			if(rs.next()) { 
+				if(rs.getString(1).equals(userPw)) {
+					result= 1;
+				}
+				else result= 0;
+			}
+			else result=-1;
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+			result= -2;
+		}
 		
 		if(result==1){//로그인 성공시
-			session.setAttribute("userId",user.getUserId());//유저아이디로 세션할당 후 메인으로 이동
+			session.setAttribute("userId",userId);//유저아이디로 세션할당 후 메인으로 이동
 			PrintWriter script=response.getWriter();
 			script.println("<script>"); //이런 스크립트문장을 자동적으로 생성
 			script.println("location.href = 'main.jsp'"); //main으로 이동

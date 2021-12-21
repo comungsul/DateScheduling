@@ -40,41 +40,55 @@
 			}
 			else
 			{//다 잘 썻다면
+			int result=-6030;	
+			String title=request.getParameter("title");
+			String date=request.getParameter("date");
+			String weight=request.getParameter("weight");	
+			String info="none";	
+			try {
 				ResultSet rs;
 				Connection conn;
-
-				String title=request.getParameter("title");
-				String date=request.getParameter("date");
-				String weight=request.getParameter("weight");	
-				String info="none";			
+				PreparedStatement pstmt;
+						
 				String SQL= "Insert INTO duty VALUES (?,?,?,?,?)";
-		try {
 				String DB_URL="jdbc:mysql://db:3306/example_db?useSSL=false&autoReconnect=true&characterEncoding=utf8";
                           	String DB_USER="example_db_user";
                           	String DB_PASSWORD="example_db_pass";
                           	Class.forName("com.mysql.jdbc.Driver");
                           	conn=DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+				pstmt=conn.prepareStatement(SQL);
+				pstmt.setString(1, title);
+				pstmt.setString(2, info);
+				pstmt.setString(3, userId);
+				pstmt.setString(4, date);
+				pstmt.setString(5, weight);
 				
-				 PreparedStatement pstmt=conn.prepareStatement(SQL);
-				 pstmt.setString(1, title);
-				 pstmt.setString(2, info);
-				 pstmt.setString(3, userId);
-				 pstmt.setString(4, date);
-				 pstmt.setString(5, weight);
+				result=pstmt.executeUpdate();
 				 
 			}catch(Exception e) {
 				e.printStackTrace();
+				
 			}
-
-				
-				
-				
+			if(result==-6030) result=-1;
 			
-				
+			if(result==-1)
+			{
+			  PrintWriter script=response.getWriter();
+			  script.println("<script>");
+			  script.println("alert('write failed...')");
+			  script.println("history.back()");
+			  script.println("</script>");
 			}
+			else{
+			  PrintWriter script=response.getWriter();
+			  script.println("<script>");
+			  script.println("location.href='main.jsp'");
+			  script.println("</script>");
+			}
+		
 			
 		}
-	
+	}
 		
 	%>
 </body>
