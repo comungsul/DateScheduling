@@ -37,43 +37,41 @@
 		
 		//Bbs bbs= new BbsDAO().getBbs(bbsTitle);
 		
-  	String title=null;
-	String info=null;
+  	
 	String id=null;
-	String date=null;
-	String weight=null;	
-	String SQL= "SELECT * FROM duty WHERE title = ?";
+	
+	
 		
 		try {
 			  ResultSet rs;
 		          Connection conn;
+		          String SQL= "SELECT * FROM duty WHERE title = ?";
 			  String DB_URL="jdbc:mysql://db:3306/example_db?useSSL=false&autoReconnect=true&characterEncoding=utf8";
                          String DB_USER="example_db_user";
                          String DB_PASSWORD="example_db_pass";
                          Class.forName("com.mysql.jdbc.Driver");
                          conn=DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+			  
 			  PreparedStatement pstmt=conn.prepareStatement(SQL);
 			  pstmt.setString(1,bbsTitle);
 			  rs=pstmt.executeQuery();
+			  
 			  while(rs.next())
 			  {
 				  //title ,info, id, date, weight
-				  title=rs.getString(1);
-				  info=rs.getString(2);
+				 
 				  id=rs.getString(3);
-				  date=rs.getString(4);
-				  weight=rs.getString(5);
+				 
 				 
 			  }
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
-		out.println("<h2>"+bbsTitle+"</h2>");
 		if(!userId.equals(id)){
 			out.println("<h1>"+"id :"+id+" userid: "+userId+"</h1>");
 		}
 		//로그인이 된 경우
-		else{//일정이름, 일정날짜, 일정 중요도를 안썻다면
+		else{   //일정이름, 일정날짜, 일정 중요도를 안썻다면
 			if(request.getParameter("title")==null||request.getParameter("date")==null||request.getParameter("weight")==null||request.getParameter("info")==null)
 			{
 				PrintWriter script=response.getWriter();
@@ -85,31 +83,40 @@
 			else
 			{//다 잘 썻다면
 				int result=-6030;
-				SQL= "UPDATE duty SET title = ?, date = ?, weight = ?, info = ?";//유저 정보를 db에 넣는다.
+				String title=request.getParameter("title");
+				String date=request.getParameter("date");
+				String weight=request.getParameter("weight");
+				String info=request.getParameter("info");
+												
+
+				
 			try {
-				ResultSet rs;
-				Connection conn;
-			
+				 ResultSet rs;
+				 Connection conn;
+				 PreparedStatement pstmt;
+				 String SQL= "UPDATE duty SET title = ?, info = ?, date = ?, weight = ? where title = ?";//유저 정보를 db에 넣는다.
 				 String DB_URL="jdbc:mysql://db:3306/example_db?useSSL=false&autoReconnect=true&characterEncoding=utf8";
                           	 String DB_USER="example_db_user";
                           	 String DB_PASSWORD="example_db_pass";
                           	 Class.forName("com.mysql.jdbc.Driver");
                           	 conn=DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
 				 
-				 PreparedStatement pstmt=conn.prepareStatement(SQL);
+				 pstmt=conn.prepareStatement(SQL);
 				 pstmt.setString(1, title);
-				 pstmt.setString(2, date);
-				 pstmt.setString(3, weight);
-				 pstmt.setString(4, info);
+				 pstmt.setString(2, info);
+				 pstmt.setString(3, date);
+				 pstmt.setString(4, weight);
+				 pstmt.setString(5, title);
 				 
 				 result=pstmt.executeUpdate();
+		
 				 
 			}catch(Exception e) {
 				e.printStackTrace();
 			}
 			if(result==-6030) result= -1; 
 				
-				if(result==-1){//db오류 
+			if(result==-1){//db오류 
 					PrintWriter script=response.getWriter();
 					script.println("<script>"); //이런 스크립트문장을 자동적으로 생성
 					script.println("alert('일정수정에 실패했습니다.')"); //main으로 이동
@@ -117,13 +124,14 @@
 					script.println("</script>");
 				}
 				
-				else{//작성된 글 정보를 db에 잘 넣음
+			else{//작성된 글 정보를 db에 잘 넣음
 					PrintWriter script=response.getWriter();
 					script.println("<script>"); //이런 스크립트문장을 자동적으로 생성
 					script.println("location.href='bbs.jsp'"); //일정목록으로 돌아감
 					script.println("</script>");
 				}
 				
+
 			}
 			
 		}

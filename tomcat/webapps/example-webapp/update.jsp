@@ -38,11 +38,11 @@
 	}
 	//Bbs bbs= new BbsDAO().getBbs(bbsTitle);
 	
-	String title=null;
-	String info=null;
-	String id=null;
-	String date=null;
-	String weight=null;	
+	String Title=null;
+	String Info=null;
+	String Id=null;
+	String Date=null;
+	String Weight=null;	
 	String SQL= "SELECT * FROM duty WHERE title = ?";
 		
 		try {
@@ -59,18 +59,18 @@
 			  while(rs.next())
 			  {
 				  //title ,info, id, date, weight
-				  title=rs.getString(1);
-				  info=rs.getString(2);
-				  id=rs.getString(3);
-				  date=rs.getString(4);
-				  weight=rs.getString(5);
+				  Title=rs.getString(1);
+				  Info=rs.getString(2);
+				  Id=rs.getString(3);
+				  Date=rs.getString(4);
+				  Weight=rs.getString(5);
 				 
 			  }
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
 
-	if(!userId.equals(id)){
+	if(!userId.equals(Id)){
 		PrintWriter script = response.getWriter();
 		script.println("<script>");
 		script.println("alert('권한이 없습니다.')");
@@ -113,7 +113,7 @@
 	<div class="container">
 		<div class="row">
 						
-		<form method="post" action='updateAction.jsp?<%=URLEncoder.encode(title,"UTF-8")%>'>
+		<form method="post" action='updateAction.jsp?<%=URLEncoder.encode(Title,"UTF-8")%>'>
 			<table class="table table-striped" style="text-align: center; border: 1px solid #dddddd">
 				<thead><%-- 게시판목록 헤드 --%>
 					<tr>
@@ -122,17 +122,17 @@
 				</thead>
 				<tbody><%-- 게시판목록 몸체 --%>
 					<tr>
-						<td><input type="text" class="form-control" placeholder="일정이름" name="title" maxlength="25" value=<%=title%>></td>
-						<%out.println("<h2>"+title+"</h2>");%>
+						<td><input type="text" class="form-control" placeholder="일정이름" name="title" maxlength="25" value="<%=Title%>" ></td>
+						
 					</tr>
 					<tr>
-						<td><input type="text" class="form-control" placeholder="날짜" name="date" maxlength="25" value=<%= date %>></td>
+						<td><input type="text" class="form-control" placeholder="날짜" name="date" maxlength="25" value="<%= Date %>"></td>
 					</tr>
 					<tr>	
-					<td><input type="text" class="form-control" placeholder="중요도" name="weight" maxlength="25" value=<%=weight%> ></td>
+					<td><input type="text" class="form-control" placeholder="중요도" name="weight" maxlength="25" value="<%=Weight%>" ></td>
 					</tr>	
 					<tr>
-						<td><textarea class="form-control" placeholder="내용" name="info" maxlength="25" style="height:350px;"><%=info%></textarea></td>
+						<td><textarea class="form-control" placeholder="내용" name="info" maxlength="25" style="height:350px;"><%=Info%></textarea></td>
 					</tr>
 				</tbody>
 			</table>

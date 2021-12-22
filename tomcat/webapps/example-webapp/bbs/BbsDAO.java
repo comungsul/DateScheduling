@@ -135,13 +135,14 @@ public class BbsDAO {
 	
 	public int update(String title, String date, String info, String weight)
 	{
-		String SQL= "UPDATE duty SET title = ?, date = ?, weight = ?, info = ?";
+		String SQL= "UPDATE duty SET title = ?, date = ?, weight = ?, info = ? where title=?";
 		try {
 				 PreparedStatement pstmt=conn.prepareStatement(SQL);
 				 pstmt.setString(1, title);
 				 pstmt.setString(2, date);
 				 pstmt.setString(3, weight);
 				 pstmt.setString(4, info);
+				 pstmt.setString(5, title);
 				 return pstmt.executeUpdate();
 				 
 			}catch(Exception e) {

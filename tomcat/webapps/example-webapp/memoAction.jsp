@@ -30,19 +30,22 @@
 	
 		//로그인이 된 경우
 		else{//일정이름, 일정날짜, 일정 중요도를 안썻다면
-			if(request.getParameter("title")==null||request.getParameter("date")==null||request.getParameter("weight")==null)
+			if(request.getParameter("title")==null||request.getParameter("sdate")==null||request.getParameter("weight")==null)
 			{
-				PrintWriter script=response.getWriter();
+				out.println("<h1>"+request.getParameter("title")+"</h1>");
+				out.println("<h1>"+"date : "+request.getParameter("sdate")+"</h1>");
+				out.println("<h1>"+request.getParameter("weight")+"</h1>");
+				/*PrintWriter script=response.getWriter();
 				script.println("<script>"); //이런 스크립트문장을 자동적으로 생성
 				script.println("쓰지 않은 사항이 있습니다."); //이런 스크립트문장을 자동적으로 생성
 				script.println("history.back()"); //join으로 다시 이동
-				script.println("</script>");
+				script.println("</script>");*/
 			}
 			else
 			{//다 잘 썻다면
 			int result=-6030;	
 			String title=request.getParameter("title");
-			String date=request.getParameter("date");
+			String date=request.getParameter("sdate");
 			String weight=request.getParameter("weight");	
 			String info="none";	
 			try {

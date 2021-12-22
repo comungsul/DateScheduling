@@ -13,6 +13,9 @@
 
 <body>
 	<%
+		String DB_URL="jdbc:mysql://db:3306/example_db?useSSL=false&autoReconnect=true&characterEncoding=utf8";
+               String DB_USER="example_db_user";
+               String DB_PASSWORD="example_db_pass";
 		String userId=null;
 		if(session.getAttribute("userId")!=null)
 		{
@@ -29,13 +32,12 @@
 		userId=request.getParameter("userId");
 		String userPw=request.getParameter("userPw");
 		int result =3;
-		ResultSet rs;
-               Connection conn;
-		String SQL="SELECT userPw FROM user where userId=?";
+		
 		try {
-			String DB_URL="jdbc:mysql://db:3306/example_db?useSSL=false&autoReconnect=true&characterEncoding=utf8";
-                       String DB_USER="example_db_user";
-                       String DB_PASSWORD="example_db_pass";
+			ResultSet rs;
+                       Connection conn;
+        		String SQL="SELECT userPw FROM user where userId=?";
+			
                       	Class.forName("com.mysql.jdbc.Driver");
                        conn=DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
 			

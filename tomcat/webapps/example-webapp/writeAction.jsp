@@ -1,13 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8"%>
-<%@ page import ="bbs.BbsDAO" %>
+<%@ page import ="java.sql.*" %>
 <%@ page import ="java.io.*" %>
 <% request.setCharacterEncoding("utf-8"); %>
-<jsp:useBean id="bbs" class="bbs.Bbs" scope="page"/>
-<jsp:setProperty name="bbs" property="date"/> <%--bbs객체에 일정날짜 설정 --%>
-<jsp:setProperty name="bbs" property="weight"/><%--bbs객체에 일정중요도 설정 --%>
-<jsp:setProperty name="bbs" property="title"/><%--bbs객체에 일정이름 설정 --%>
-<jsp:setProperty name="bbs" property="info"/><%-- bbs객체에 일정정보 저장 --%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -34,7 +30,7 @@
 	
 		//로그인이 된 경우
 		else{//일정이름, 일정날짜, 일정 중요도를 안썻다면
-			if(bbs.getDate()==null||bbs.getTitle()==null||bbs.getWeight()==null)
+			if(request.getParameter("title")==null||request.getParameter("weight")==null||request.getParameter("date")==null)
 			{
 				PrintWriter script=response.getWriter();
 				script.println("<script>"); //이런 스크립트문장을 자동적으로 생성
@@ -44,8 +40,37 @@
 			}
 			else
 			{//다 잘 썻다면
-				BbsDAO bbsDAO = new BbsDAO();
-				int result = bbsDAO.writer(bbs.getTitle(),bbs.getInfo(),userId,bbs.getDate(),bbs.getWeight());//유저 정보를 db에 넣는다.
+				
+				int result=-6030;	
+				String title=request.getParameter("title");
+				String date=request.getParameter("date");
+				String weight=request.getParameter("weight");	
+				String info="none";	
+				try {
+					ResultSet rs;
+					Connection conn;
+					PreparedStatement pstmt;
+							
+					String SQL= "Insert INTO duty VALUES (?,?,?,?,?)";
+					String DB_URL="jdbc:mysql://db:3306/example_db?useSSL=false&autoReconnect=true&characterEncoding=utf8";
+		                  	String DB_USER="example_db_user";
+		                  	String DB_PASSWORD="example_db_pass";
+		                  	Class.forName("com.mysql.jdbc.Driver");
+		                  	conn=DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+					pstmt=conn.prepareStatement(SQL);
+					pstmt.setString(1, title);
+					pstmt.setString(2, info);
+					pstmt.setString(3, userId);
+					pstmt.setString(4, date);
+					pstmt.setString(5, weight);
+					
+					result=pstmt.executeUpdate();
+				 
+			}catch(Exception e) {
+				e.printStackTrace();
+				
+			}
+			if(result==-6030) result=-1;
 				
 				if(result==-1){//db오류 
 					PrintWriter script=response.getWriter();

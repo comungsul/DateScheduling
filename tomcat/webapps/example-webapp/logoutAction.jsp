@@ -8,9 +8,10 @@
 </head>
 
 <body>
-<%-- 할당된 세션을 해제해주고 메인으로 이동시킴 --%>
+
 	<%
-	session.invalidate();//할당된 세션 free
+	session.removeAttribute("userId");
+	session.invalidate();
 	%>
 	<script>
 		location.href='main.jsp';

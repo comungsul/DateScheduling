@@ -17,6 +17,10 @@
 
 <body>
 <%
+	String DB_URL="jdbc:mysql://db:3306/example_db?useSSL=false&autoReconnect=true&characterEncoding=utf8";
+	String DB_USER="example_db_user";
+	String DB_PASSWORD="example_db_pass";
+
 	String userId=null;
 	if(session.getAttribute("userId")!=null)
 	{
@@ -81,7 +85,7 @@
 						data-toggle="dropdown" role="button" aria-haspopup="true"
 						aria-expanded="false">회원관리<span class="caret"></span></a>
 					<ul class="dropdown-menu">
-						<li><a href="logoutAction.jsp">로그아웃</a></li>
+						<li><a onclick="return confirm('log out?')" href="logoutAction.jsp">로그아웃</a></li>
 					</ul>
 				</li>
 			</ul>
@@ -97,9 +101,6 @@
 	      try{
 	          ResultSet rs;
 	      	  Connection conn;
-		  String DB_URL="jdbc:mysql://db:3306/example_db?useSSL=false&autoReconnect=true&characterEncoding=utf8";
-		  String DB_USER="example_db_user";
-		  String DB_PASSWORD="example_db_pass";
 		  Class.forName("com.mysql.jdbc.Driver");
 		  conn=DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
 		 
@@ -110,9 +111,11 @@
 			String name = rs.getString(1);
 			String date=rs.getString(4);
 			LocalDate now = LocalDate.now();
-			int day = now.getDayOfMonth();
+			int tday = now.getDayOfMonth();
+			int tmon = now.getMonth().getValue();
+			int tyear = now.getYear();
 	
-		if(Integer.parseInt(date.substring(0,4))==year&&Integer.parseInt(date.substring(4,6))==(month+1)&&Integer.parseInt(date.substring(6))==day)
+		if(Integer.parseInt(date.substring(0,4))==tyear&&Integer.parseInt(date.substring(4,6))==tmon&&Integer.parseInt(date.substring(6))==tday)
 		{//해당하는 날짜에 맞춰 스케쥴 출력
 			out.println("<h3 align='center'>"+rs.getString(3)+" : "+name+"</h3>"); //유저이름 : 할 일 이름 순으로 출력
 		}
@@ -129,7 +132,7 @@
   <HR>
   <form  method="post" action='memoAction.jsp'>
    
-   날짜 : <input type=text name=date size=8 style="margin-right:10px" placeholder="YYYYMMDD">
+   날짜 : <input type=text name=sdate size=8 style="margin-right:10px" placeholder="YYYYMMDD" required >
  <label for="weight">중요도 : </label>
 <select name="weight" id="weight">
     <option value="">일정 중요도</option>
@@ -139,7 +142,7 @@
     <option value="2">2</option>
     <option value="1">1</option>
 </select>
-  일정이름 :  <input type=text name=title style="margin-right:10px">
+  일정이름 :  <input type=text name=title style="margin-right:10px" required>
    <input type=submit class="btn btn-primary"  value="추가">
   </form>
 
@@ -184,12 +187,9 @@
    for(int i=1; i<=end; i++) { //날짜출력
     out.println("<td height=100 style='margin:0 0; vertical-align : top'>" + i );
    	try{
-   			   ResultSet rs;
+      			   ResultSet rs;
          	           Connection conn;
 
-                          String DB_URL="jdbc:mysql://db:3306/example_db?useSSL=false&autoReconnect=true&characterEncoding=utf8";
-                          String DB_USER="example_db_user";
-                          String DB_PASSWORD="example_db_pass";
                           Class.forName("com.mysql.jdbc.Driver");
                           conn=DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
                          

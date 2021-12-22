@@ -3,6 +3,7 @@
 <%@ page import ="java.io.*"%>
 <%@ page import = "java.sql.*"%>
 <%@ page import ="java.net.URLEncoder" %>
+<% request.setCharacterEncoding("utf-8");%>
 
 <!DOCTYPE html>
 <html>
@@ -15,6 +16,9 @@
 
 <body>
 <%
+	String DB_URL="jdbc:mysql://db:3306/example_db?useSSL=false&autoReconnect=true&characterEncoding=utf8";
+        String DB_USER="example_db_user";
+        String DB_PASSWORD="example_db_pass";
 	String userId=null;
 	if(session.getAttribute("userId")!=null)
 	{
@@ -49,9 +53,7 @@
 		try {
 			  ResultSet rs;
 		          Connection conn;
-			  String DB_URL="jdbc:mysql://db:3306/example_db?useSSL=false&autoReconnect=true&characterEncoding=utf8";
-                         String DB_USER="example_db_user";
-                         String DB_PASSWORD="example_db_pass";
+			  
                          Class.forName("com.mysql.jdbc.Driver");
                          conn=DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
 			  PreparedStatement pstmt=conn.prepareStatement(SQL);
@@ -145,7 +147,8 @@
 					</tr> 
 					<tr>
 						<td>일정내용</td>
-						<td colspan="2" style="min-height:200px; text-align:left;"><%= info.replaceAll(" ", "&nbsp;").replaceAll("\n","<br>") %></td>
+						<% info=info.replaceAll(" ", "&nbsp;").replaceAll("\n","<br>"); %>
+						<td colspan="2" style="min-height:200px; text-align:left;"><%= info %></td>
 					</tr>
 				</tbody>
 			</table>
