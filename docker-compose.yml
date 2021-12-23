@@ -1,5 +1,8 @@
 version: "3.7"
-
+networks:
+  date:
+    external:
+      name: mon_net
 services:
   db:
    image: mysql:5.6
@@ -25,3 +28,10 @@ services:
     - ./tomcat/webapps:/usr/local/tomcat/webapps
    links:
     - db
+   deploy:
+    replicas: 3
+   healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8004/" ]
+      interval: 20s
+      timeout: 10s
+      retries: 3
